@@ -38,6 +38,7 @@ func main() {
 		ReadFileDefinition,
 		ListFilesDefinition,
 		EditFileDefinition,
+		GetCurrentDirDefinition,
 	}
 
 	agent := NewAgent(&client, getUserMessage, tools)
@@ -331,4 +332,19 @@ func createNewFile(filePath, content string) (string, error) {
 	}
 
 	return fmt.Sprintf("Successfully created file %s", filePath), nil
+}
+
+var GetCurrentDirDefinition = ToolDefinition{
+	Name:        "get_current_dir",
+	Description: "Get the current working directory path",
+	InputSchema: GenerateSchema[struct{}](),
+	Function:    GetCurrentDir,
+}
+
+func GetCurrentDir(input json.RawMessage) (string, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	return dir, nil
 }
